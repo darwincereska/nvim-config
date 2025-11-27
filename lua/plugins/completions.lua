@@ -16,16 +16,30 @@ return {
             local cmp = require("cmp")
             local luasnip = require("luasnip")
 
+            -- Load VSCode-style snippets
             require("luasnip.loaders.from_vscode").lazy_load()
 
+            -- Highlighting for completion windows
             vim.api.nvim_set_hl(0, "CmpBorder", { link = "FloatBorder" })
             vim.api.nvim_set_hl(0, "CmpDocBorder", { link = "FloatBorder" })
             vim.api.nvim_set_hl(0, "CmpDocNormal", { link = "NormalFloat" })
 
+            local snippets_enabled = true
+
+            -- Toggle function for snippets
+            function toggle_snippets()
+                snippets_enabled = not snippets_enabled
+            end
+
+            -- Key mapping to toggle snippets
+            vim.api.nvim_set_keymap('n', '<Leader>ts', ':lua toggle_snippets()<CR>', { noremap = true, silent = true })
+
             cmp.setup({
                 snippet = {
                     expand = function(args)
-                        luasnip.lsp_expand(args.body)
+                        if snippets_enabled then
+                            luasnip.lsp_expand(args.body)
+                        end
                     end,
                 },
 
@@ -39,7 +53,7 @@ return {
                     ["<Tab>"] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_next_item()
-                        elseif luasnip.expand_or_jumpable() then
+                        elseif snippets_enabled and luasnip.expand_or_jumpable() then
                             luasnip.expand_or_jump()
                         else
                             fallback()
@@ -49,7 +63,7 @@ return {
                     ["<S-Tab>"] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_prev_item()
-                        elseif luasnip.jumpable(-1) then
+                        elseif snippets_enabled and luasnip.jumpable(-1) then
                             luasnip.jump(-1)
                         else
                             fallback()
@@ -60,7 +74,7 @@ return {
                 sources = cmp.config.sources({
                     { name = "nvim_lsp" },
                     { name = "luasnip" },
-                    { name = "buffer" },
+                    { name = "buffer", keyword_length = 3 },
                     { name = "path" },
                     { name = "spell" },
                 }),
@@ -113,3 +127,4 @@ return {
         end,
     },
 }
+
