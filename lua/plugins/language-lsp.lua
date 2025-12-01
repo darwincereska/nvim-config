@@ -16,7 +16,7 @@ return {
                     "pyright",
                     "lua_ls",
                     "ts_ls",
-                    -- "kotlin_lsp",
+                    -- "kotlin_language_server",
                 },
                 automatic_installation = true,
             })
@@ -55,7 +55,7 @@ return {
 
             -- Configure diagnostic display
             vim.diagnostic.config({
-                virtual_text = true,
+                virtual_text = false,
                 signs = false,  -- Disable icons in sign column
                 underline = true,
                 update_in_insert = false,
@@ -82,7 +82,7 @@ return {
                 "pyright",
                 "lua_ls",
                 "ts_ls",
-                -- "kotlin_lsp",
+                "kotlin_language_server",
             }
 
             for _, server in ipairs(servers) do
